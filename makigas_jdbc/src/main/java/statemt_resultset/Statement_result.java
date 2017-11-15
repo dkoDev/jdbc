@@ -12,15 +12,22 @@ import org.slf4j.LoggerFactory;
 
 public class Statement_result {
 
+	private static final Logger LOG = LoggerFactory.getLogger(Statement_result.class);
 	private Connection conexion = null;
 
 	public Statement_result() throws SQLException {
 		try {
+			LOG.info("Se inicia conexion");
 			conectar();
-			System.out.println("puta vid#####!!");
+			LOG.info("Se termina conexion");
+			LOG.info("Se inicia consulta");
 			consulta();
-		} catch (Exception e) {
+			LOG.info("Se termina consulta");
+		} catch (SQLException sql) {
 			cerrar();
+			LOG.error("Error durante el uso del JDBC", sql);
+			
+			
 		}
 
 	}
@@ -34,35 +41,35 @@ public class Statement_result {
 	public void cerrar() throws SQLException {
 		if (conexion != null)
 			conexion.close();
+		
 	}
 
 	private void consulta() throws SQLException {
-		System.out.println("puta vida!!");
+		
 		Statement statement = conexion.createStatement();
-		ResultSet rs = statement.executeQuery("SELECT id_alumno, nombre, apellidos  FROM alumnos");
+		ResultSet rs = statement.executeQuery("SELECT id_alumno, nombre, apellidos  FROM alumno");
 	
 		while(rs.next()){
 			int idAlumno = rs.getInt(1);
 			String nombreAlumno = rs.getString(2);
 			String apellidoAlumno = rs.getString(3);
 			
-			System.out.println("clve alumno "+idAlumno+"Nombre: "+nombreAlumno+"Apelliudos: "+apellidoAlumno+"\n");
+			System.out.println("clve alumno "+idAlumno+" Nombre: "+nombreAlumno+" Apellidos: "+apellidoAlumno+"\n");
 			
 		}
 		rs.close();
 		statement.close();
+		LOG.info("Se cierra Stament");
 	}
 
-	private static final Logger LOG = LoggerFactory
-			.getLogger(Statement_result.class);
 
 	public static void main(String[] args) {
 		try {
 			new Statement_result();
 			
 		} catch (SQLException sql) {
-			//LOG.error("Error durante el uso del JDBC", sql);
-			sql.getStackTrace();
+			LOG.error("Error durante el uso del JDBC", sql);
+			//sql.printStackTrace();
 		}
 	}
 
